@@ -15,7 +15,7 @@ class NumberedBox extends createjs.Container{
             .beginStroke('#000000')
             .drawRect(0, 0, boxWidth,boxHeight);
 
-        var text = new createjs.Text(number, "20px Arial", "#000000");
+        var text = new createjs.Text(number, "22px Gemunu Libre", "#000000");
         text.textAlign = 'center';
         text.textBaseline = 'middle';
         text.x = boxWidth / 2;
@@ -83,7 +83,7 @@ class GameOverView extends createjs.Container{
         this.setBounds(0,0,viewWidth,viewHeight);
     }
     restartGame(){
-        this.game.restartGame(this);
+        this.game.restartGame();
     }
 }
 
@@ -114,6 +114,9 @@ class Game{
         this.canvas = document.getElementById("game-canvas")
         this.stage = new createjs.Stage(this.canvas);
 
+        //load sounds
+        this.loadSound();
+
         this.stage.enableMouseOver(10);
 
         this.stage.width = this.canvas.width;
@@ -135,13 +138,19 @@ class Game{
 
         //add the background
 
-
         //generate the numbered boxes
         this.generateMultipleBoxes(this.gameData.amountOfBox);
     }
 
     version(){
         return '1.0.0'
+    }
+
+    loadSound() {
+        createjs.Sound.registerSound("soundfx/background.wav", 'background');
+        createjs.Sound.registerSound("soundfx/sweep.wav", 'sweep');
+        createjs.Sound.registerSound("soundfx/gameover.wav", 'gameover');
+        createjs.Sound.alternateExtensions = ['ogg','aiff'];
     }
 
     generateMultipleBoxes(amount=10){
@@ -155,21 +164,25 @@ class Game{
     }
 
     handleClick(numberedBox){
+        numberedBox.number === 1? createjs.Sound.play('background') : null;
         if (this.gameData.isRightNumber(numberedBox.number)){
             this.stage.removeChild(numberedBox);
             this.gameData.nextNumber();
+            createjs.Sound.play('sweep')
 
             //check if the player won
             if (this.gameData.isGameWin()){
+                createjs.Sound.stop();
+                createjs.Sound.play('gameover')
                 this.stage.addChild(new GameOverView(this));
             }
         }
     }
 
-    restartGame(gameOverView){
+    restartGame(){
         this.gameData.resetData()
+        this.stage.removeAllChildren();
         this.generateMultipleBoxes(this.gameData.amountOfBox);
-        this.stage.removeChild(gameOverView);
     }
 
     retinalize(){
