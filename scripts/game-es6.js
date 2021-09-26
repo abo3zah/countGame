@@ -24,6 +24,10 @@ class NumberedBox extends createjs.Container{
         this.addChild(movieClip, text);
         this.setBounds(0,0,boxWidth,boxHeight);
 
+        movieClip.on("mouseover",function(){
+           
+        })
+
         //handle click/tap
         this.on('click', this.handleClick.bind(this));
     }
@@ -164,9 +168,16 @@ class Game{
     }
 
     handleClick(numberedBox){
-        numberedBox.number === 1? createjs.Sound.play('background') : null;
+
         if (this.gameData.isRightNumber(numberedBox.number)){
-            this.stage.removeChild(numberedBox);
+
+            numberedBox.number === 1? createjs.Sound.play('background',{loop: -1}) : null;
+            
+            createjs.Tween.get(numberedBox,{loop:false})
+                .to({alpha: 0}, 1000, createjs.Ease.getPowInOut(4))
+
+            setTimeout(() => {this.stage.removeChild(numberedBox); }, 1000);
+
             this.gameData.nextNumber();
             createjs.Sound.play('sweep')
 
