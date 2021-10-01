@@ -1,5 +1,6 @@
 canvas {
-    background: gray;
+    background:radial-gradient(lightgray, gray);
+    border:1px ;
     margin: auto;
     display: block;
 }
