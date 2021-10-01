@@ -144,7 +144,7 @@ class GameBar extends createjs.Container{
         this.text.x += 20;
 
         var mistakeSymbol = new createjs.Shape();
-        mistakeSymbol.graphics.ss(2).s("red").f("red").mt(5,3).lt(15,17).mt(15,3).lt(5,17);
+        mistakeSymbol.graphics.ss(2).s("red").f("red").mt(5,4).lt(15,16).mt(15,4).lt(5,16);
 
         this.addChild(box, this.text, mistakeSymbol);
         this.setBounds(0,0,boxWidth,boxHeight);
