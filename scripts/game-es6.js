@@ -138,7 +138,7 @@ class GameBar extends createjs.Container{
             .beginStroke('#000000')
             .drawRect(0, 0, boxWidth,boxHeight);
 
-        this.text = new createjs.Text(0, "18px Gemunu Libre", "#000000");
+        this.text = new createjs.Text(0, "20px Gemunu Libre", "#000000");
         this.text.textAlign = 'start';
         this.text.textBaseline = 'top';
         this.text.x += 20;
@@ -156,8 +156,8 @@ class GameBar extends createjs.Container{
 
 class Game{
     constructor(){
-        console.log('Welcome to the game. Version', this.version());
 
+        //define variables
         this.canvas = document.getElementById("game-canvas")
         this.stage = new createjs.Stage(this.canvas);
         this.barHeight = 20;
@@ -188,15 +188,11 @@ class Game{
         this.restartGame();
     }
 
-    version(){
-        return '1.0.1'
-    }
-
     loadSound() {
-        createjs.Sound.registerSound("soundfx/background.wav", 'background');
-        createjs.Sound.registerSound("soundfx/sweep.wav", 'sweep');
+        createjs.Sound.registerSound("soundfx/pick.wav", 'pick');
         createjs.Sound.registerSound("soundfx/gameover.wav", 'gameover');
-        createjs.Sound.alternateExtensions = ['ogg','aiff'];
+        createjs.Sound.registerSound("soundfx/wrong.wav", 'wrong');
+        createjs.Sound.alternateExtensions = ['ogg'];
     }
 
     generateMultipleBoxes(amount=10){
@@ -212,24 +208,27 @@ class Game{
     handleClick(numberedBox){
 
         if (this.gameData.isRightNumber(numberedBox.number)){
-
-            numberedBox.number === 1? createjs.Sound.play('background',{loop: -1}) : null;
             
             createjs.Tween.get(numberedBox,{loop:false})
                 .to({alpha: 0}, 400, createjs.Ease.getPowInOut(4))
+            
+            numberedBox.removeAllEventListeners();
 
-            setTimeout(() => {this.stage.removeChild(numberedBox); }, 400);
+            setTimeout(() => {
+                this.stage.removeChild(numberedBox); 
+            }, 400);
 
             this.gameData.nextNumber();
-            createjs.Sound.play('sweep')
+            createjs.Sound.play('pick');
 
             //check if the player won
             if (this.gameData.isGameWin()){
                 createjs.Sound.stop();
-                createjs.Sound.play('gameover')
+                createjs.Sound.play('gameover');
                 this.stage.addChild(new GameOverView(this));
             }
         } else {
+            createjs.Sound.play('wrong');
             this.gameBar.text.text = this.gameData.numberOfMistakes;
         }
     }
