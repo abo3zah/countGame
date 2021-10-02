@@ -56,11 +56,12 @@ class GameOverView extends createjs.Container{
             .s('black')
             .lf(['white','lightgray'],[0,1],0,0,0,viewHeight)
             .mt(0,70)
-            .qt(150,90,300, 70)
+            .qt(150,80,300, 70)
+            .qt(150,80,0, 70)
             .r(0, 0, viewWidth,viewHeight);
 
         //you won text
-        var text = new createjs.Text('You Won!!', "26px Arial", "black");
+        var text = new createjs.Text('🎉You Won🎉', "26px Arial", "black");
         text.x = viewWidth/2;
         text.y = 40;
         text.textAlign = 'center';
@@ -74,7 +75,7 @@ class GameOverView extends createjs.Container{
         button.y = (viewHeight-buttonHeight)/2;
 
         //text
-        var buttonText = new createjs.Text('Restart!!', "20px Arial", "#000000");
+        var buttonText = new createjs.Text('😃Play Again😃', "18px Arial", "black");
         buttonText.x = viewWidth/2;
         buttonText.y = viewHeight/2 - buttonHeight/4;
         buttonText.textAlign = 'center';
@@ -228,14 +229,11 @@ class Game{
             
             numberedBox.removeAllEventListeners();
 
-            //setTimeout(() => { this.stage.removeChild(numberedBox)}, 400);
-
             this.gameData.nextNumber();
             createjs.Sound.play('pick');
 
             //check if the player won
             if (this.gameData.isGameWin()){
-                createjs.Sound.stop();
                 createjs.Sound.play('gameover');
                 this.stage.addChild(new GameOverView(this));
             }
