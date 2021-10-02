@@ -49,12 +49,18 @@ class GameOverView extends createjs.Container{
         var viewWidth = this.game.stage.width;
         var viewHeight= this.game.stage.height;
         
+        //TODO: Add nice background
         //background
         var gameOverBackground = new createjs.Shape();
-        gameOverBackground.graphics.beginFill('black').drawRect(0, 0, viewWidth,viewHeight);
+        gameOverBackground.graphics
+            .s('black')
+            .lf(['white','lightgray'],[0,1],0,0,0,viewHeight)
+            .mt(0,70)
+            .qt(150,90,300, 70)
+            .r(0, 0, viewWidth,viewHeight);
 
         //you won text
-        var text = new createjs.Text('You Won!!', "26px Arial", "#FFFFFF");
+        var text = new createjs.Text('You Won!!', "26px Arial", "black");
         text.x = viewWidth/2;
         text.y = 40;
         text.textAlign = 'center';
@@ -90,6 +96,7 @@ class GameOverView extends createjs.Container{
         this.addChild(gameOverBackground, text, button, buttonText);
         this.setBounds(0,0,viewWidth,viewHeight);
     }
+
     restartGame(){
         this.game.restartGame();
     }
@@ -160,7 +167,7 @@ class Game{
         //define variables
         this.canvas = document.getElementById("game-canvas")
         this.stage = new createjs.Stage(this.canvas);
-        this.barHeight = 20;
+        this.barHeight = 21;
 
         //load sounds
         this.loadSound();
@@ -209,14 +216,19 @@ class Game{
 
         if (this.gameData.isRightNumber(numberedBox.number)){
             
+            var cardScale = 0.3;
+            var xOffset = 10;
+            var yOffset = 3;
+            var cardLocation = this.stage.width-(numberedBox.getBounds().width * cardScale) - xOffset;
+            
+            this.stage.setChildIndex( numberedBox, this.stage.getNumChildren()-1);
+
             createjs.Tween.get(numberedBox,{loop:false})
-                .to({alpha: 0}, 400, createjs.Ease.getPowInOut(4))
+                .to({x:cardLocation, y:yOffset, scaleX:cardScale, scaleY:cardScale}, 400, createjs.Ease.getPowInOut(4))
             
             numberedBox.removeAllEventListeners();
 
-            setTimeout(() => {
-                this.stage.removeChild(numberedBox); 
-            }, 400);
+            //setTimeout(() => { this.stage.removeChild(numberedBox)}, 400);
 
             this.gameData.nextNumber();
             createjs.Sound.play('pick');
@@ -242,6 +254,11 @@ class Game{
         this.gameBar = new GameBar(this);
         this.stage.addChild(this.gameBar);
         this.gameBar.x = this.gameBar.y = 0;
+
+        //load background
+        var border = new createjs.Shape();
+        border.graphics.s('black').ss(2).r(0,0,this.stage.width,this.stage.height);
+        this.stage.addChild(border);
 
         //load boxes
         this.generateMultipleBoxes(this.gameData.amountOfBox);
